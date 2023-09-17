@@ -6,15 +6,12 @@ class Library:
         self._borrowedBooks = []
 
     def display_all_books(self): 
-        #print(f"\n{len(self._books)} CURRENT LIST OF BOOKS ARE: ")
         print(f"\nCURRENT LIST OF ALL BOOKS: ") 
         for book in self._books: 
-            #if book not in self._borrowedBooks:
             print(" ♦-- " + book.get_title()) 
         print("\n") 
 
     def display_available_books(self): 
-        #print(f"\n{len(self._books)} CURRENT LIST OF BOOKS ARE: ")
         print(f"\nCURRENT LIST OF ALL AVAILABLE BOOKS: ") 
         for book in self._books: 
             if book not in self._borrowedBooks:
@@ -24,18 +21,10 @@ class Library:
     def add_book(self, book): 
         self._books.append(book) 
 
-    def checkout_book(self, book): 
-        # if book not in self._books: 
-        #     print(f"Eastbrook library doesn't currently have {book.get_title()} in it's inventory.  Sorry.\n") 
-        # if book in self._borrowedBooks: 
-        #     print(f"{book.get_title()} is currently being borrowed by someone else.  Sorry.\n") 
-        #else: 
+    def checkout_book(self, book):  
         self._borrowedBooks.append(book) 
 
-    def return_book(self, book): 
-        # if book not in self._books: 
-        #     print(f"Eastbrook library doesn't currently have {book.get_title()} in it's inventory.\n  Try returning it to a different library.\n") 
-        # else: 
+    def return_book(self, book):  
         if book not in self._borrowedBooks:
             return
         self._borrowedBooks.remove(book)
