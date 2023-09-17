@@ -29,86 +29,104 @@ def register_new_user(lib):
         lib.add_user(user) 
         return user 
 
-def main_menu(lib, ID, book_list):
+def main_menu(lib, ID):
+    user = ""
+
     for i in lib.get_users():
         if i.get_ID() == ID:
             user = i
             break
 
-    print(f"Welcome {user.get_name()}, what would you like to do today?\n")
+    print(f"\nWelcome {user.get_name()}, what would you like to do today?\n")
     while True:
         print("------------------------------")
-        print("1. View current list of books")
-        print("2. View a book's information")
-        print("3. Checkout a book")
-        print("4. Return a book")
-        print("5. Donate a book")
-        print("6. Logout")
+        print("1. View current list of all books")
+        print("2. View current list of available books")
+        print("3. View a book's information")
+        print("4. Checkout a book")
+        print("5. Return a book")
+        print("6. Donate a book")
+        print("7. Logout")
 
-        choice = input("Enter your choice:  ")
+        choice = input("\nEnter your choice:  ")
 
         if choice == "1":
-            lib.display_books()
+            lib.display_all_books()
 
-        elif choice == "2":
+        if choice == "2":
+            lib.display_available_books()
+
+        elif choice == "3":
             print("Ok, great, what book would you like more information on?\n")
             book_name = input("")
             book = None
                         
-            for available_book in book_list:
+            for available_book in lib.get_books():
                 if available_book.get_title() == book_name:
                     book = available_book
                     break
                         
-                if book:
-                    print("Great, here you go: \n")
-                    book.display_info()
-                else:
-                    print("No book exists with the given name \n")
+            if book:
+                print("Great, here you go: \n")
+                book.display_info()
+            else:
+                print("No book exists with the given name \n")
 
-        elif choice == "3":
+        elif choice == "4":
             if isinstance(user, Student):
                 if len(user.get_borrowedBooks()) >= 6:
                     print("Sorry, students can only check out up to 6 books at a time. Please return 1 book before you check out another.")
                     continue
                             
-                elif isinstance(user, User):
-                    if len(user.get_borrowedBooks()) >= 3:
-                        print("Sorry, regular users can only check out up to 3 books at a time. Please return 1 book before you check out another.")
-                        continue
+            elif isinstance(user, User):
+                if len(user.get_borrowedBooks()) >= 3:
+                    print("Sorry, regular users can only check out up to 3 books at a time. Please return 1 book before you check out another.")
+                    continue
 
-                print("Ok, great, what book would you like to check out?\n")
-                book_name = input("")
-                book = None
-                        
-                for available_book in book_list:
-                    if available_book.get_title() == book_name:
-                        book = available_book
-                        break
-                        
-                    if book:
-                        user.borrow_book(book)
-                        lib.checkout_book(book)
-                    else:
-                        print(f"Sorry, we don't currently have that book in our inventory. \n")
-
-        elif choice == "4":
-            print("Ok, great, what book would you like to return?\n")
+            print("Ok, great, what book would you like to check out?\n")
             book_name = input("")
-            book = None
+            available_book = None
+            checked_out_book = None
                         
-            for available_book in book_list:
-                if available_book.get_title() == book_name:
-                    book = available_book
+            for book_search in lib.get_borrowed_books():
+                if book_search.get_title() == book_name:
+                    checked_out_book = book_search
                     break
-                        
-                if book:
-                    user.return_book(book)
-                    lib.return_book(book)
-                else:
-                    print("Sorry, we don't currently have that book in our inventory!!  Perhaps it's from a different library?\n")
+
+            if checked_out_book:
+                print(f"{checked_out_book.get_title()} is currently being borrowed by someone else.  Sorry.\n")
+                continue
+
+            for book_search in lib.get_books():
+                if book_search.get_title() == book_name:
+                    available_book = book_search
+                    break          
+            
+            if available_book:
+                user.borrow_book(available_book)
+                lib.checkout_book(available_book)
+            else:
+                print(f"Sorry, we don't currently have that book in our inventory. \n")
 
         elif choice == "5":
+            print("Ok, great, what book would you like to return?\n")
+            book_name = input("")
+            checked_out_book = None
+            available_book = None
+
+            for book_search in lib.get_books():
+                if book_search.get_title() == book_name:
+                    available_book = book_search
+                    break
+
+            if available_book:
+                user.return_book(available_book)
+                lib.return_book(available_book)
+            else:
+                print("Sorry, we don't currently have that book in our inventory!!  Perhaps it's from a different library?\n")
+                
+
+        elif choice == "6":
             print("Ok, great, what is the title of the book you would like to donate?\n")
             title = input("")
             print("And the author?\n")
@@ -116,8 +134,9 @@ def main_menu(lib, ID, book_list):
             book = Book(title, author)
             lib.add_book(book)
 
-        elif choice == "6":
-            break 
+        elif choice == "7":
+            break
+
 
 def main():
     book_list = [
@@ -128,7 +147,7 @@ def main():
         Book("the great gatsby", "Robert Johnson"),
         Book("to kill a mockingbird", "Emily Davis"),
         Book("complete history of the world", "Michael Anderson"),
-        Book("the da vinci code", "Sarah Thompson"),
+        Book("the da vinci code", "Dan Brown"),
         Book("the count of monte cristo", "David Wilson"),
         Book("how to win friends and influence people", "Laura Brown"),
         Book("the catcher in the rye", "Daniel Taylor"),
@@ -137,7 +156,6 @@ def main():
 
     names = []
     IDin = False
-    user = ""
 
     lib = Library(book_list, names)
     running = True
@@ -155,11 +173,10 @@ def main():
             for i in lib.get_users():
                 if i.get_ID() == ID:
                     IDin = True
-                    user = i
                     break
 
             if IDin:
-                main_menu(lib, ID, book_list)
+                main_menu(lib, ID)
                 # print(f"Welcome {user.get_name()}, what would you like to do today?\n")
                 # while True:
                 #     print("------------------------------")
@@ -257,18 +274,17 @@ def main():
                     new_user = register_new_user(lib)
                     ID = new_user.get_ID()
                     print(f"Thank you. Here is your ID: {ID}.")
-                    main_menu(lib, ID, book_list)
+                    main_menu(lib, ID)
                     #continue
 
                 else:
-                    print("Thank you. Bye-bye.")
                     break
 
         elif choice == "2":
             new_user = register_new_user(lib)
             ID = new_user.get_ID()
             print(f"Thank you. Here is your ID: {ID}.")
-            main_menu(lib, ID, book_list)
+            main_menu(lib, ID)
             #continue
             # for i in lib.get_users():
             #     if i.get_ID() == ID:
