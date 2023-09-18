@@ -86,21 +86,15 @@ def main_menu(lib, ID):
             print("Ok, great, what book would you like to check out?\n")
             book_name = input("")
             available_book = None
-            checked_out_book = None
-                        
-            for book_search in lib.get_borrowed_books():
-                if book_search.get_title() == book_name:
-                    checked_out_book = book_search
-                    break
-
-            if checked_out_book:
-                print(f"{checked_out_book.get_title()} is currently being borrowed by someone else.  Sorry.\n")
-                continue
 
             for book_search in lib.get_books():
                 if book_search.get_title() == book_name:
                     available_book = book_search
                     break          
+
+            if available_book.get_availability() == "Unavailable":
+                print(f"{available_book.get_title()} is currently being borrowed by someone else.  Sorry.\n")
+                continue         
             
             if available_book:
                 user.borrow_book(available_book)
@@ -111,7 +105,6 @@ def main_menu(lib, ID):
         elif choice == "5":
             print("Ok, great, what book would you like to return?\n")
             book_name = input("")
-            checked_out_book = None
             available_book = None
 
             for book_search in lib.get_books():
