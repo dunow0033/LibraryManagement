@@ -14,7 +14,7 @@ class User:
 
     def borrow_book(self, book): 
         self._borrowedBooks.append(book) 
-        book.availability = "Unavailable" 
+        book.set_availability("Unavailable") 
         print(f"{self._name} has checked out {book.get_title()}.\n") 
 
     def return_book(self, book):
@@ -22,7 +22,7 @@ class User:
             print(f"You have not borrowed {book.get_title()}, so you cannot return this book")
             return
         self._borrowedBooks.remove(book) 
-        book.availability = "Available" 
+        book.set_availability("Available") 
         print(f"Thank you {self._name}.  {book.get_title()} is now available!!\n")
         
     def get_borrowedBooks(self):

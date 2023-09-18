@@ -9,7 +9,11 @@ class Book:
     
     def get_availability(self):
         return self._availability
+    
+    def set_availability(self, status):
+        self._availability = status
 
     def display_info(self): 
         print("Title: " + self._title + "\n") 
-        print("Author: " + self._author + "\n") 
+        print("Author: " + self._author + "\n")
+        print("Availability: " + self._availability + "\n")
